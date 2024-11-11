@@ -1,42 +1,52 @@
 import connect from "@/app/lib/db/mongoDB";
+import Shoes from "@/app/lib/models/Shoes";
 import { Params } from "next/dist/server/request/params";
-import Car from "@/app/lib/models/Car";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(
+export async function PUT(
   request: NextRequest,
   { params }: { params: Params }
 ) {
   try {
     await connect();
-    const { carId } = await params;
+    const { shoesId } = await params;
+    console.log("shoesId",shoesId);
 
-    if (!carId) {
+
+    // const r = await request.json();
+    const { type, size, color } = await request.json();
+    console.log("type, size, color",type, size, color);
+
+    if (!shoesId) {
       return NextResponse.json(
         {
-          message: "Missing 'id' in request URL",
+          message: "Missing 'id' field",
         },
         { status: 400 }
       );
     }
 
-    const deletedCar = await Car.findByIdAndDelete(carId);
+    const updatedShoes = await Shoes.findOneAndUpdate(
+      { _id: shoesId },
+      { type, size, color },
+      { new: true }
+    );
 
-    if (!deletedCar) {
+    console.log("updatedShoes", updatedShoes);
+    
+
+    if (!updatedShoes) {
       return NextResponse.json(
         {
-          message: "Car not found",
+          message: "Shoes not found",
         },
         { status: 404 }
       );
     }
-
-    return NextResponse.json(
-      {
-        message: "Car deleted successfully",
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      message: "Shoes updated successfully",
+      shoes: updatedShoes,
+    });
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(

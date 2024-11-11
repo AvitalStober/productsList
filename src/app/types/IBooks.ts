@@ -1,8 +1,15 @@
 import { Document } from "mongoose";
 
-interface Books extends Document {
+interface IBooks extends Document {
+  Book: any;
+  _id: string;
   title: string;
   author: string;
 }
 
-export default Books;
+interface NewBook {
+  title: string;
+  author: string;
+}
+
+export type { IBooks, NewBook };

@@ -1,6 +1,6 @@
 import connect from "@/app/lib/db/mongoDB";
 import { Params } from "next/dist/server/request/params";
-import Car from "@/app/lib/models/Car";
+import Book from "@/app/lib/models/Book";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
@@ -9,9 +9,10 @@ export async function DELETE(
 ) {
   try {
     await connect();
-    const { carId } = await params;
+    const { bookId } = await params;
+    console.log(request.url);
 
-    if (!carId) {
+    if (!bookId) {
       return NextResponse.json(
         {
           message: "Missing 'id' in request URL",
@@ -19,13 +20,13 @@ export async function DELETE(
         { status: 400 }
       );
     }
+    
+    const deletedBook = await Book.findByIdAndDelete(bookId);
 
-    const deletedCar = await Car.findByIdAndDelete(carId);
-
-    if (!deletedCar) {
+    if (!deletedBook) {
       return NextResponse.json(
         {
-          message: "Car not found",
+          message: "Book not found",
         },
         { status: 404 }
       );
@@ -33,7 +34,7 @@ export async function DELETE(
 
     return NextResponse.json(
       {
-        message: "Car deleted successfully",
+        message: "Book deleted successfully",
       },
       { status: 200 }
     );

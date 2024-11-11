@@ -1,6 +1,6 @@
 import connect from "@/app/lib/db/mongoDB";
+import Shoes from "@/app/lib/models/Shoes";
 import { Params } from "next/dist/server/request/params";
-import Car from "@/app/lib/models/Car";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
@@ -8,10 +8,11 @@ export async function DELETE(
   { params }: { params: Params }
 ) {
   try {
+    // התחברות ל-DB אם נדרש
     await connect();
-    const { carId } = await params;
+    const { shoesId } = await params;
 
-    if (!carId) {
+    if (!shoesId) {
       return NextResponse.json(
         {
           message: "Missing 'id' in request URL",
@@ -19,13 +20,13 @@ export async function DELETE(
         { status: 400 }
       );
     }
-
-    const deletedCar = await Car.findByIdAndDelete(carId);
-
-    if (!deletedCar) {
+    console.log("shoesId",shoesId);
+    
+    const deletedShoes = await Shoes.findByIdAndDelete(shoesId);
+    if (!deletedShoes) {
       return NextResponse.json(
         {
-          message: "Car not found",
+          message: "Shoes not found",
         },
         { status: 404 }
       );
@@ -33,11 +34,12 @@ export async function DELETE(
 
     return NextResponse.json(
       {
-        message: "Car deleted successfully",
+        message: "Shoes deleted successfully",
       },
       { status: 200 }
     );
   } catch (error) {
+    // טיפול בשגיאות
     if (error instanceof Error) {
       return NextResponse.json(
         {
