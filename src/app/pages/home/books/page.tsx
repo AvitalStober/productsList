@@ -1,6 +1,7 @@
 "use client";
 import Card from "@/app/components/Card";
-import { deleteBook, getAllBooks, postBook } from "@/app/services/bookService";
+import Book from "@/app/components/inputs/Book";
+import { deleteBook, getAllBooks } from "@/app/services/bookService";
 import { IBooks, NewBook } from "@/app/types/IBooks";
 import React, { useEffect, useState } from "react";
 
@@ -10,9 +11,6 @@ const page: React.FC = () => {
   const [adding, setAdding] = useState(false);
 
   const [id, setId] = useState("");
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const getData = async () => {
@@ -22,7 +20,6 @@ const page: React.FC = () => {
         console.log("books ", dataBooks);
       } catch (error) {
         console.error("Error fetching shoes:", error);
-        setError("Error fetching shoes.");
       }
     };
     getData();
@@ -35,34 +32,6 @@ const page: React.FC = () => {
     setId("");
   };
 
-  const handleAddItem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    try {
-      console.log(title, author);
-
-      if (title && author) {
-        const newItem: NewBook = { title, author };
-
-        const addedBook: IBooks = await postBook(newItem);
-
-        console.log(addedBook);
-        
-        setData((prevData) => [...prevData, addedBook.Book]);
-
-        setAdding(false);
-        setTitle("");
-        setAuthor("");
-      } else {
-        setError("Please fill in all fields.");
-      }
-    } catch (error: any) {
-      setError(
-        "Error adding shoe: " + (error.response?.data?.message || error.message)
-      );
-    }
-  };
-
   return (
     <div className="flex flex-wrap">
       <button
@@ -73,48 +42,35 @@ const page: React.FC = () => {
       </button>
 
       {adding && (
-        <form
-          onSubmit={handleAddItem}
-          className="flex flex-col gap-4 p-6 bg-white rounded-lg shadow-lg max-w-md w-full mx-auto"
-        >
-          <input
-            type="text"
-            placeholder="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-          />
-          <input
-            type="text"
-            placeholder="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            required
-            className="p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-          />
-          <button
-            type="submit"
-            className="w-full py-2 mt-4 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
-          >
-            Add Book
-          </button>
-          {error && (
-            <p className="mt-2 text-red-500 text-sm text-center">{error}</p>
-          )}
-        </form>
+        <Book
+          setData={setData}
+          setAdding={setAdding}
+          adding={true}
+          setEditing={setEditing}
+          id={id}
+        />
       )}
 
-      {data.map((book) => (
-        <Card
-          info={book}
-          type={"books"}
-          key={book._id}
-          setEditing={setEditing}
-          setId={setId}
-          handleDelete={handleDelete}
-        />
-      ))}
+      {data.map((book) =>
+        editing && book._id === id ? (
+          <Book
+            setData={setData}
+            setAdding={setAdding}
+            adding={false}
+            setEditing={setEditing}
+            id={id}
+          />
+        ) : (
+          <Card
+            info={book}
+            type={"books"}
+            key={book._id}
+            setEditing={setEditing}
+            setId={setId}
+            handleDelete={handleDelete}
+          />
+        )
+      )}
     </div>
   );
 };

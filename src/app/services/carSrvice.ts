@@ -32,10 +32,10 @@ export const postCar = async (newItem: NewCar) => {
   return res;
 };
 
-export const putCar = async () => {
-  const res = axios
-    .put("http://localhost:3000/api/cars/put")
-    .then((response) => response.data)
+export const putCar = async (newItem: NewCar, carId: string) => {
+  const res = await axios
+    .put(`http://localhost:3000/api/cars/put/${carId}`, newItem)
+    .then((response) => response.data.car)
     .catch((error) => console.error(error));
 
   return res;

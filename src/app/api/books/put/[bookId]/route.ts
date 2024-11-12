@@ -1,13 +1,21 @@
 import connect from "@/app/lib/db/mongoDB";
 import Book from "@/app/lib/models/Book";
+import { Params } from "next/dist/server/request/params";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(request: NextRequest) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Params }
+) {
   try {
     await connect();
-    const { id, title, author } = await request.json();
+    const { bookId } = await params;
+    console.log("shoesId", bookId);
 
-    if (!id) {
+    const { title, author } = await request.json();
+    console.log("title, author", title, author);
+
+    if (!bookId) {
       return NextResponse.json(
         {
           message: "Missing 'id' field",
@@ -17,10 +25,12 @@ export async function PUT(request: NextRequest) {
     }
 
     const updatedBook = await Book.findOneAndUpdate(
-      { _id: id }, 
-      { title, author }, 
-      { new: true } 
+      { _id: bookId },
+      { title, author },
+      { new: true }
     );
+
+    console.log("updatedBook", updatedBook);
 
     if (!updatedBook) {
       return NextResponse.json(

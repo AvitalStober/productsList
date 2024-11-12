@@ -12,8 +12,6 @@ export async function PUT(
     const { shoesId } = await params;
     console.log("shoesId",shoesId);
 
-
-    // const r = await request.json();
     const { type, size, color } = await request.json();
     console.log("type, size, color",type, size, color);
 

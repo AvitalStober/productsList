@@ -1,10 +1,7 @@
 "use client";
 import Card from "@/app/components/Card";
 import Shoes from "@/app/components/inputs/Shoes";
-import {
-  deleteShoes,
-  getAllShoes,
-} from "@/app/services/shoesService";
+import { deleteShoes, getAllShoes } from "@/app/services/shoesService";
 import { IShoes, NewShoe } from "@/app/types/IShoes";
 import React, { useEffect, useState } from "react";
 
@@ -14,10 +11,6 @@ const ShoesList: React.FC = () => {
   const [editing, setEditing] = useState(false);
 
   const [id, setId] = useState("");
-  const [type, setType] = useState("");
-  const [size, setSize] = useState(0);
-  const [color, setColor] = useState("");
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const getData = async () => {
@@ -26,7 +19,6 @@ const ShoesList: React.FC = () => {
         setData(dataShoes);
       } catch (error) {
         console.error("Error fetching shoes:", error);
-        setError("Error fetching shoes.");
       }
     };
     getData();

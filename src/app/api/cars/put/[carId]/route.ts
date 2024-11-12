@@ -1,13 +1,20 @@
 import connect from "@/app/lib/db/mongoDB";
 import Car from "@/app/lib/models/Car";
+import { Params } from "next/dist/server/request/params";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(request: NextRequest) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Params }
+) {
   try {
     await connect();
-    const { id, year, carModel, color } = await request.json();
+    const { carId } = await params;
+    console.log("carId", carId);
 
-    if (!id) {
+    const { year, carModel, color } = await request.json();
+
+    if (!carId) {
       return NextResponse.json(
         {
           message: "Missing 'id' field",
@@ -17,9 +24,9 @@ export async function PUT(request: NextRequest) {
     }
 
     const updatedCar = await Car.findOneAndUpdate(
-      { _id: id }, 
-      { year, carModel, color }, 
-      { new: true } 
+      { _id: carId },
+      { year, carModel, color },
+      { new: true }
     );
 
     if (!updatedCar) {

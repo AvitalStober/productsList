@@ -23,7 +23,7 @@ export const getAllBooks = async (): Promise<IBooks[]> => {
 };
 
 export const getBookById = async (): Promise<IBooks> => {
-  const res = axios
+  const res = await axios
     .get("http://localhost:3000/api/books/get/:bookId")
     .then((response) => response.data)
     .catch((error) => console.error(error));
@@ -40,17 +40,19 @@ export const postBook = async (newItem: NewBook) => {
   return res;
 };
 
-export const putBook = async () => {
-  const res = axios
-    .put("http://localhost:3000/api/books/put")
-    .then((response) => response.data)
+export const putBook = async (newItem: NewBook, bookId: string) => {
+  console.log("newItem", newItem);
+  
+  const res = await axios
+    .put(`http://localhost:3000/api/books/put/${bookId}`, newItem)
+    .then((response) => response.data.book)
     .catch((error) => console.error(error));
 
   return res;
 };
 
 export const deleteBook = async (bookId: string) => {
-  const res = axios
+  const res = await axios
     .delete(`http://localhost:3000/api/books/delete/${bookId}`)
     .then((response) => response.data)
     .catch((error) => console.error(error));
